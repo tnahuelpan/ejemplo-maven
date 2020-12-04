@@ -17,8 +17,10 @@ pipeline {
             }
         }
         stage('SonarQube') {
-            withSonarQubeEnv(installationName: 'sonar'){
-                sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
+            steps{
+                withSonarQubeEnv(installationName: 'sonar'){
+                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
+                }
             }
         }
         stage('Run'){
