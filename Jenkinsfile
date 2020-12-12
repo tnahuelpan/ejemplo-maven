@@ -16,27 +16,17 @@ pipeline {
                 sh 'mvn clean package -e'
             }
         }
-        stage('SonarQube') {
+        stage('SonarQube'){
             steps{
                 withSonarQubeEnv(installationName: 'sonar'){
                     sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
                 }
             }
         }
-        stage('Run'){
-            steps{
-                sh 'mvn spring-boot:run &'
-            }
-        }
-        stage('Sleep'){
-            steps{
-                sh 'sleep 20'
-            }
-        }
-        stage('Testing'){
-            steps{
-                sh 'curl -X GET "http://localhost:8081/rest/mscovid/test?msg=testing"'
-            }
-        }
+        stage('uploadNexus'){
+			steps{
+				nexusPublisher nexusInstanceId: 'nexus', nexusRepositoryId: 'feature-nexus-repo', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: 'jar', filePath: 'D:\\Estudios\\ejemplo-maven\\build\\DevOpsUsach2020-0.0.1.jar']], mavenCoordinate: [artifactId: 'DevOpsUsach2020', groupId: 'com.devopsusach2020', packaging: 'jar', version: '0.0.1']]]
+			}
+		}
     }
 }
